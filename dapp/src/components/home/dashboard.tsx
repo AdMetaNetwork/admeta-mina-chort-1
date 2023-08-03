@@ -116,6 +116,7 @@ const Dashboard: FC = () => {
             c.init().then(async () => {
               const r = await c.getUserLevel()
               const o = JSON.parse(r[3])
+              if (!score) return
               const s = JSON.parse(score)
               Object.keys(o).map((key) => {
                 o[key] += s[key]

@@ -9,7 +9,7 @@ interface User {
 }
 
 class Mina {
-  private users: User[]
+  private users: User[] = []
 
   constructor() {}
 
