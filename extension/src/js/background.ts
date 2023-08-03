@@ -88,8 +88,8 @@ class Background {
     }
   }
 
-  saveAccount(data: Account) {
-    browser.storage.local.set({ account: data.account, balance: data.balance })
+  saveAccount(data: any) {
+    browser.storage.local.set({ address: data.address, balance: data.balance })
     this.account = data
   }
 

@@ -60,7 +60,7 @@ const ConnectWallet: FC = () => {
               <BaseBtn
                 label={ 'Connect Mina' }
                 handleClick={ () => {
-                  U.Messager.sendMessageToContent(U.C.ADMETA_MSG_HACKATHON_ACCOUNT, { address })
+                  U.Messager.sendMessageToContent(U.C.ADMETA_MSG_ACCOUNT, { address })
                   U.H.connectMinaWallet((address) => {
                     setMinaAddress!(address[0])
                     if (isConnected && address) {
