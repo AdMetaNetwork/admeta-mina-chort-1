@@ -89,12 +89,16 @@ const Dashboard: FC = () => {
               <div className={'text-gray-500 mr-8 w-[50px]'}>{scoreMap[key]}</div>
               <div className={'text-yellow-500 mr-8 w-[50px]'}>Lv.{U.H.calculationSingleLevel(scoreMap[key])}</div>
               <div className={`h-2 w-[60%] bg-gray-700`}>
-                <div className={`h-2 bg-blue-500 w-[${step(U.H.calculationSingleLevel(scoreMap[key]), U.C.MIN_LEVEL)[0]}%]`}></div>
+                <div 
+                  className={`h-2 bg-blue-500`}
+                  style={{width: `${step(U.H.calculationSingleLevel(scoreMap[key]), U.C.MIN_LEVEL)[0]}%`}}
+                  ></div>
               </div>
             </div>
           ))
         }
       </div>
+      
       <div className={'flex mt-20 w-full justify-center mb-20'}>
         <BaseBtn
           label={'Data Sync'}
@@ -106,7 +110,8 @@ const Dashboard: FC = () => {
                 GameFi: 0,
                 NFT: 0,
                 Metaverse: 0,
-                OnChainData: 0
+                OnChainData: 0,
+                DID: 0
               })
             }
             console.log(score)
@@ -121,6 +126,7 @@ const Dashboard: FC = () => {
               Object.keys(o).map((key) => {
                 o[key] += s[key]
               })
+              
               setScoreMap(o)
 
               const level = BigNumber.from(U.H.calculationAllLevel(o)[0])
@@ -129,6 +135,27 @@ const Dashboard: FC = () => {
               console.log(level, allScore, categoryScore)
               c.setUserLevel(level, allScore, categoryScore).then()
               localStorage.removeItem('sync_data')
+            })
+          }}
+        />
+        <div className='w-10'></div>
+        <BaseBtn
+          label={'Clear DID data'}
+          bg='bg-red-500'
+          handleClick={() => {
+            const c = new U.CallEVM()
+            c.init().then(async () => {
+              const r = await c.getUserLevel()
+              const o = JSON.parse(r[3])
+              setScoreMap(o)
+
+              const level = BigNumber.from(U.H.calculationAllLevel(o)[0])
+              const allScore = BigNumber.from(U.H.calculationAllLevel(o)[1])
+              o.DID = 0
+              const categoryScore = JSON.stringify(o)
+              console.log(level, allScore, categoryScore)
+              c.setUserLevel(level, allScore, categoryScore).then()
+              U.Messager.sendMessageToContent(U.C.ADMETA_MSG_CLEAR_DID, { address })
             })
           }}
         />

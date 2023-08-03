@@ -25,7 +25,7 @@ const Account: FC<Prop> = ({ address }) => {
         <div
           className="text-white text-sm font-semibold"
           onClick={() => {
-            browser.storage.local.clear()
+            
           }}
         >Test account 1</div>
         <div

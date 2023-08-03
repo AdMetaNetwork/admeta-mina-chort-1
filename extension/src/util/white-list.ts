@@ -1,6 +1,6 @@
 const WHITE_LIST = {
 	searching_engines: ['Google', 'Bing', 'Baidu', 'DuckDuckGo'],
-	categories: ['DeFi', 'GameFi', 'NFT', 'Metaverse', 'OnChainData'],
+	categories: ['DeFi', 'GameFi', 'NFT', 'Metaverse', 'OnChainData', 'DID'],
 	products: [
 		{
 			name: 'Uniswap',
@@ -26,6 +26,11 @@ const WHITE_LIST = {
 			name: 'Opensea',
 			domain: 'opensea.io',
 			category: ['NFT']
+		},
+		{
+			name: 'Litentry',
+			domain: 'litentry.com',
+			category: ['DID']
 		}
 	]
 }

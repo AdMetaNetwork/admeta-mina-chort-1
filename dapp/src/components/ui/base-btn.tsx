@@ -3,13 +3,14 @@ import { FC } from 'react'
 interface Props {
   label: string
   handleClick: () => void
-  disable?: boolean
+  disable?: boolean,
+  bg?: string
 }
 
-const BaseBtn: FC<Props> = ({ label, disable = false, handleClick }) => {
+const BaseBtn: FC<Props> = ({ label, disable = false, handleClick, bg = 'bg-blue-500' }) => {
   return (
     <div
-      className='inline-flex px-6 py-2.5 rounded-full bg-blue-500 hover:opacity-80 cursor-pointer'
+      className={`inline-flex px-6 py-2.5 rounded-full ${bg} hover:opacity-80 cursor-pointer`}
       onClick={() => {
         if (!disable) {
           handleClick()

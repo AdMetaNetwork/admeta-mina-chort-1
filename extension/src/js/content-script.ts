@@ -68,11 +68,13 @@ class ContentScript {
 
   syncStorageMessages(message: any) {
     const l = localStorage.getItem('sync_data')
+    console.log(l)
+    console.log(message)
     if (l) {
-      const d = JSON.stringify({ ...JSON.parse(l), ...message.data })
+      const d = JSON.stringify({ ...JSON.parse(l), ...message })
       localStorage.setItem('sync_data', d)
     } else {
-      localStorage.setItem('sync_data', JSON.stringify(message.data))
+      localStorage.setItem('sync_data', JSON.stringify(message))
     }
   }
 

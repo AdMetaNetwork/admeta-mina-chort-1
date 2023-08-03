@@ -1,7 +1,7 @@
 import browser from 'webextension-polyfill'
 import { Account, Domain, ExtStatus, ScanDomain, DataConfig, Domains } from "../util/types";
 import Messenger from "../util/messenger";
-import { ADMETA_MSG_ACCOUNT, ADMETA_MSG_AD_PUSH, ADMETA_MSG_DOMAIN, ADMETA_MSG_SWITCH, DOMAIN_CONFIG_URL, ADMETA_MSG_NFT_PUSH, NFT_RECOMMOND, ADMETA_MSG_NFT_CLAIM, TEST_ACCOUNT, RPC, CONTRACT_ADDRESS, REPORTING_TIME, OPEN_TAB_NUMBER, ADMETA_MSG_EVM } from '../util/constant'
+import { ADMETA_MSG_ACCOUNT, ADMETA_MSG_AD_PUSH, ADMETA_MSG_DOMAIN, ADMETA_MSG_SWITCH, DOMAIN_CONFIG_URL, ADMETA_MSG_NFT_PUSH, NFT_RECOMMOND, ADMETA_MSG_NFT_CLAIM, TEST_ACCOUNT, RPC, CONTRACT_ADDRESS, REPORTING_TIME, OPEN_TAB_NUMBER, ADMETA_MSG_CLEAR_DID } from '../util/constant'
 import Helper from '../util/helper';
 import { BigNumber, ethers } from 'ethers'
 import { abi } from "../util/abi";
@@ -39,7 +39,8 @@ class Background {
         GameFi: 0,
         NFT: 0,
         Metaverse: 0,
-        OnChainData: 0
+        OnChainData: 0,
+        DID: 0,
       }
     })
   }
@@ -65,6 +66,11 @@ class Background {
   listenForMessages() {
     browser.runtime.onMessage.addListener((message, sender) => {
       const { type, data } = message;
+      if (type === ADMETA_MSG_ACCOUNT) {
+        const tabId = sender.tab?.id
+        console.log(tabId, '1233-->>>')
+        browser.storage.local.set({ tabId }).then()
+      }
       this.handleDealMessages(type, data)
     });
   }
@@ -82,6 +88,10 @@ class Background {
       case ADMETA_MSG_SWITCH:
         this.saveSwitchExt(data)
         break;
+
+        case ADMETA_MSG_CLEAR_DID:
+          browser.storage.local.remove('isdid')
+          break;
 
       default:
         break;
@@ -200,6 +210,9 @@ class Background {
 
         console.log('report', idx, this.whiteList[idx].category)
         const categorys = this.whiteList[idx].category
+        if (categorys.includes('DID')) {
+          browser.storage.local.set({ isdid: 'yes' })
+        }
         const { score } = await browser.storage.local.get(['score'])
         categorys.forEach((item: any) => {
           score[item] += 50
@@ -240,7 +253,7 @@ class Background {
   }
 
   async searchKeyWordAd(tabId: number, tab: browser.Tabs.Tab) {
-    const { account } = await browser.storage.local.get(['account'])
+    const { account, isdid } = await browser.storage.local.get(['account', 'isdid'])
     const q = this.getBroswerSearch(tab.url || '')
     if (q === 'admeta') {
       Messenger.sendMessageToContentScript(
@@ -257,7 +270,9 @@ class Background {
       );
     }
     if (q === 'did' || q === 'litentry') {
-      this.callEVM(tabId, account)
+      if (isdid) {
+        this.callEVM(tabId, account)
+      }
     }
     if (q === 'nft' || q === 'opensea') {
       Messenger.sendMessageToContentScript(
@@ -308,7 +323,6 @@ class Background {
   }
 
   async callEVM(tabId: number, account: string) {
-    console.log('tabId=----->>>', tabId)
     const idx = BigNumber.from(8)
 
     this.contract?.adInfo(idx).then((b: any) => {

@@ -29,7 +29,8 @@ const Dashboard: FC<Prop> = ({ address }) => {
                   GameFi: 0,
                   NFT: 0,
                   Metaverse: 0,
-                  OnChainData: 0
+                  OnChainData: 0,
+                  DID: 0,
                 }})
               } }/>
             </div>
