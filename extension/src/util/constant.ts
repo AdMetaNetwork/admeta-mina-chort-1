@@ -9,7 +9,7 @@ export const ADMETA_MSG_NFT_CLAIM = 'ADMETA_MSG_NFT_CLAIM'
 export const ADMETA_MSG_EVM = 'ADMETA_MSG_EVM'
 export const ADMETA_MSG_HACKATHON_SYNC_TO = 'ADMETA_MSG_HACKATHON_SYNC_TO'
 // export const WEP_PAGE = 'http://localhost:3020/'
-export const WEP_PAGE = 'http://45.8.133.193:3020/'
+export const WEP_PAGE = 'https://hackathon.mina.admeta.network/'
 export const DOMAIN_CONFIG_URL = 'https://raw.githubusercontent.com/AdMetaNetwork/web3-product-categorized-list/main/web3-product-list.json'
 
 // export const LINK_HTTP = 'http://localhost:3000/'
