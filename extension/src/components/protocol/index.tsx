@@ -49,7 +49,7 @@ const Protocol: FC = () => {
         <BaseButton
           label="Agree"
           handleClick={async () => {
-            U.Helper.goWeb(U.WEP_PAGE)
+            U.Helper.goWeb(U.C.WEP_PAGE)
             browser.storage.local.set({ step: 1 })
           }}
         />

@@ -1,69 +1,95 @@
-import browser from "webextension-polyfill";
-import * as U from '../util'
-import { ethers, Contract } from "ethers";
-import abi from "../util/abi";
-import { pushNftCard } from './ui'
-
+import browser from 'webextension-polyfill'
+import Messenger from "../util/messenger";
+import { ADMETA_MSG_AD_PUSH, ADMETA_MSG_NFT_PUSH, ADMETA_MSG_NFT_CLAIM, ADMETA_MSG_HACKATHON_SYNC_TO } from '../util/constant'
+import { pushAdCard, pushNftCard, pushClaimCard } from './ui'
+import Helper from '../util/helper';
 class ContentScript {
-  contract: Contract
 
-  constructor() {
+  listenForMessages() {
+    browser.runtime.onMessage.addListener((message, sender) => {
+      const { type, data } = message;
+      this.handleDealMessages(type, data)
+    });
+  }
+
+  getNftHold() {
+    const address = localStorage.getItem('ajs_user_id')!.replace(/\"/g, "");
+    const pathname = location.pathname
+    const p = pathname.split('/')
+    console.log(p[p.length - 1], p[p.length - 2])
+    const contractaddress = p[p.length - 2]
+    const tokenID = p[p.length - 1]
+    if (contractaddress && !contractaddress.includes('0x')) {
+      return
+    }
+    Helper.apiCall({
+      URI: `https://api.etherscan.io/api`,
+      full_url: true,
+      method: 'GET',
+      params: {
+        module: 'account',
+        action: 'tokennfttx',
+        contractaddress: '0xe361f10965542ee57d39043c9c3972b77841f581',
+        apikey: '3S92QDIPUN5FYSNGYKB26USKKVQZ23N764',
+        address: address,
+        page: '1',
+        offset: '10'
+      }
+    }).then((v) => {
+      v.json().then((c) => {
+        const isHold = c.result.some((v: any) => { return v.tokenID === tokenID })
+        if (isHold) {
+          pushClaimCard()
+        }
+      })
+    })
+  }
+
+  handleDealMessages(type: string, data: any) {
+    switch (type) {
+      case ADMETA_MSG_AD_PUSH:
+        pushAdCard(data.message.callbackLink.includes('youtube') ? 'VIDEO' : 'PICTURE', data.message.callbackLink, data.message.metadata, data.message.id, data.address)
+        break;
+      case ADMETA_MSG_NFT_PUSH:
+        pushNftCard()
+        break;
+
+      case ADMETA_MSG_NFT_CLAIM:
+        this.getNftHold();
+        break;
+      case ADMETA_MSG_HACKATHON_SYNC_TO:
+        this.syncStorageMessages(data);
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  syncStorageMessages(message: any) {
+    const l = localStorage.getItem('sync_data')
+    if (l) {
+      const d = JSON.stringify({ ...JSON.parse(l), ...message.data })
+      localStorage.setItem('sync_data', d)
+    } else {
+      localStorage.setItem('sync_data', JSON.stringify(message.data))
+    }
   }
 
   listenWebPageMessages() {
     window.addEventListener("message", async function (msg) {
-      if (msg.data.admeta) {
-        U.Messenger.sendMessageToBackground(msg.data.type, msg.data.data)
-      }
+      Messenger.sendMessageToBackground(msg.data.type, msg.data.data)
     })
   }
 
-  listenBackageMessages() {
-    browser.runtime.onMessage.addListener((message, sender) => {
-      console.log(message, sender)
-      const l = localStorage.getItem('sync_data')
-      if (l) {
-        const d = JSON.stringify({ ...JSON.parse(l), ...message.data })
-        localStorage.setItem('sync_data', d)
-      } else {
-        localStorage.setItem('sync_data', JSON.stringify(message.data))
-      }
+  init() {
+    // Listen for messages from background and run the listener from the map
+    this.listenForMessages();
 
-    })
+    // Listen for messages from web page
+    this.listenWebPageMessages();
   }
 
-  connectContract() {
-    // connect test network
-    const p = new ethers.providers.JsonRpcProvider('https://eth-sepolia.public.blastapi.io');
-    this.contract = new ethers.Contract(U.CONTRACT_ADDRESS, abi, p);
-  }
-
-  pushAd(address: string) {
-    // TODO Ad Display Rules
-    const oneDay = 24 * 60 * 60 * 1000;
-    const now = new Date();
-    const timeUntilTomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1) - now;
-
-    const timer = setTimeout(() => {
-      // call contract match ad
-      this.contract?.matchAd(address).then((a: any) => {
-        pushNftCard()
-      })
-
-      clearTimeout(timer)
-      this.pushAd(address);
-    }, oneDay);
-
-  }
-
-
-  async init() {
-
-    this.listenWebPageMessages()
-    this.listenBackageMessages()
-
-    this.connectContract()
-  }
 }
 
 new ContentScript().init()

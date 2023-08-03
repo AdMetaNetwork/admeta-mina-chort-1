@@ -1,98 +1,111 @@
+import { API } from './constant'
+import { ApiInfo, RequestReq, Params, Domains } from './types'
 import browser from 'webextension-polyfill'
-import * as U from './'
+class Helper {
+  private static handleGetParams(p: any) {
+    let u = ''
+    Object.keys(p).forEach((key) => {
+      console.log(key, p[key])
+      u += `${key}=${p[key]}&`
+    })
+    u = u.substr(0, u.length - 1);
 
-class Help {
-	static async goWeb(url: string) {
-		const { tabId } = await browser.storage.local.get(['tabId'])
-		console.log(tabId, '111')
-		if (tabId) {
-			browser.tabs.update(+tabId, { active: true }).then()
-		} else {
-			browser.tabs.create({ url }).then()
-		}
+    return u
+  }
 
-	}
+  static apiCall(apiInfo: ApiInfo<Params>) {
+    let url = apiInfo.full_url ? apiInfo.URI : API + apiInfo.URI;
+    const req: RequestReq<any, any> = {
+      method: apiInfo.method,
+      headers: {
+        'Content-Type': apiInfo.content_type || 'application/json',
+      },
+    };
 
-	static formatAddress(address: string) {
-		if (!address) {
-			return ''
-		}
-		const str_1 = address.substring(0, 4)
-		const str_2 = address.substring(address.length - 4)
-		return `${str_1}......${str_2}`
-	}
+    switch (apiInfo.method) {
+      case 'GET':
+        if (apiInfo.params) {
+          url = url.concat('?', this.handleGetParams(apiInfo.params));
+        }
+        break;
+      case 'POST':
+        req.body = JSON.stringify(apiInfo.params);
+        break;
+    }
+    return fetch(url, req);
+  }
 
-	private static handleGetParams(p: any) {
-		let u = ''
-		Object.keys(p).forEach(key => {
-			console.log(key, p[key])
-			u += `${key}=${p[key]}&`
-		})
-		u = u.substr(0, u.length - 1)
+  static goWeb(url: string) {
+    browser.tabs.create({ url })
+  }
+  
+  static copyTextToClipboard(text: string) {
+    //Create a textbox field where we can insert text to. 
+    var copyFrom = document.createElement("textarea");
+  
+    //Set the text content to be the text you wished to copy.
+    copyFrom.textContent = text;
+  
+    //Append the textbox field into the body as a child. 
+    //"execCommand()" only works when there exists selected text, and the text is inside 
+    //document.body (meaning the text is part of a valid rendered HTML element).
+    document.body.appendChild(copyFrom);
+  
+    //Select all the text!
+    copyFrom.select();
+  
+    //Execute command
+    document.execCommand('copy');
+  
+    //(Optional) De-select the text using blur(). 
+    copyFrom.blur();
+  
+    //Remove the textbox field from the document.body, so no other JavaScript nor 
+    //other elements can get access to this.
+    document.body.removeChild(copyFrom);
+  }
 
-		return u
-	}
+  static formatAddress = (address: string): string => {
+    const str_1 = address.substring(0, 4)
+    const str_2 = address.substring(address.length - 4)
+    return `${str_1}......${str_2}`
+  }
 
-	static async apiCall(apiInfo: U.ApiInfo<U.Params>) {
-		let url = apiInfo.full_url ? apiInfo.URI : U.API + apiInfo.URI
-		const req: U.RequestReq<any, any> = {
-			method: apiInfo.method,
-			headers: {
-				'Content-Type': apiInfo.content_type || 'application/json'
-			}
-		}
+  static getQueryVariable(variable: string, url: string) {
+    let query = new URL(url).search.substring(1)
+    let vars = query.split("&");
+    for (let i=0;i<vars.length;i++) {
+      let pair = vars[i].split("=");
+        if(pair[0] == variable){
+          return pair[1]
+        }
+    }
+    return '';
+  }
 
-		switch (apiInfo.method) {
-			case 'GET':
-				if (apiInfo.params) {
-					url = url.concat('?', this.handleGetParams(apiInfo.params))
-				}
-				break
-			case 'POST':
-				req.body = JSON.stringify(apiInfo.params)
-				break
-		}
-		try {
-			const response = await fetch(url, req)
-			return await response.json()
-		} catch (error) {
-			return Promise.reject()
-		}
-	}
-
-	static copyTextToClipboard(text: string) {
-		var copyFrom = document.createElement('textarea')
-		copyFrom.textContent = text
-		document.body.appendChild(copyFrom)
-		copyFrom.select()
-		document.execCommand('copy')
-		copyFrom.blur()
-		document.body.removeChild(copyFrom)
-	}
-
-	static getQueryVariable(variable: string, url: string) {
-		let query = new URL(url).search.substring(1)
-		let vars = query.split('&')
-		for (let i = 0; i < vars.length; i++) {
-			let pair = vars[i].split('=')
-			if (pair[0] == variable) {
-				return pair[1]
-			}
-		}
-		return ''
-	}
-
-	static isInWhiteList(whiteList: U.Domain[], url: string) {
+  static isInWhiteList(whiteList: Domains[], url: string) {
 		return whiteList.some((v) => {
 			return url.includes(v.name.toLowerCase())
 		})
 	}
 
-	static currentDomainIdx(whiteList: U.Domain[], url: string) {
+  static currentDomainIdx(whiteList: Domains[], url: string) {
 		return whiteList.findIndex((v) => {
 			return url.includes(v.name.toLowerCase())
 		})
 	}
+
+  static currentDate() {
+    const date = new Date()
+    const y = date.getFullYear()
+    const d = date.getDay()
+    const m = date.getMonth() + 1
+
+    return `${y}-${m}-${d}`
+  }
+  
 }
 
-export default Help
+
+
+export default Helper;

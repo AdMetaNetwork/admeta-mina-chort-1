@@ -1,4 +1,4 @@
-import { POW_IMG_BASE64, CLOSE_IMG_BASE64, PLAY_ICON_BASE64, LINK_HTTP, NFT_RECOMMOND } from '../util'
+import { POW_IMG_BASE64, CLOSE_IMG_BASE64, PLAY_ICON_BASE64, LINK_HTTP, NFT_RECOMMOND } from '../util/constant'
 
 // https://storageapi.fleek.co/038f3525-c411-4ef9-86e4-bc833d0c2d7f-bucket/IMG_8428.JPG
 

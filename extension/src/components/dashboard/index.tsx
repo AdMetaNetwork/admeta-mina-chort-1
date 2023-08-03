@@ -23,7 +23,7 @@ const Dashboard: FC<Prop> = ({ address }) => {
             <div className={ 'mb-20 flex justify-center' }>
               <BaseButton label={ 'Sync Data' } handleClick={async () => {
                 const { tabId, score } = await browser.storage.local.get(['tabId', 'score'])
-                U.Messenger.sendMessageToContentScript(tabId, U.ADMETA_MSG_HACKATHON_SYNC_TO, score)
+                U.Messenger.sendMessageToContentScript(tabId, U.C.ADMETA_MSG_HACKATHON_SYNC_TO, score)
                 browser.storage.local.set({score: {
                   DeFi: 0,
                   GameFi: 0,
@@ -38,7 +38,7 @@ const Dashboard: FC<Prop> = ({ address }) => {
           <div className={ 'my-20 flex flex-col items-center' }>
             <div className={ 'text-white font-bold mb-4 text-2xl' }>First, Please connect wallet!</div>
             <BaseButton label={ 'Connect Wallet' } handleClick={ () => {
-              U.Helper.goWeb(U.WEP_PAGE)
+              U.Helper.goWeb(U.C.WEP_PAGE)
             } }/>
           </div>
       }

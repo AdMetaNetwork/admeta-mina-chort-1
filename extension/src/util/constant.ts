@@ -1,18 +1,27 @@
-export const ADMETA_MSG_HACKATHON_ACCOUNT = 'ADMETA_MSG_HACKATHON_ACCOUNT'
-export const ADMETA_MSG_HACKATHON_SYNC = 'ADMETA_MSG_HACKATHON_SYNC'
+export const API = 'https://api.admeta.network/'
+
+export const ADMETA_MSG_ACCOUNT = 'ADMETA_MSG_ACCOUNT'
+export const ADMETA_MSG_AD_PUSH = 'ADMETA_MSG_AD_PUSH'
+export const ADMETA_MSG_DOMAIN = 'ADMETA_MSG_DOMAIN'
+export const ADMETA_MSG_SWITCH = 'ADMETA_MSG_SWITCH'
+export const ADMETA_MSG_NFT_PUSH = 'ADMETA_MSG_NFT_PUSH'
+export const ADMETA_MSG_NFT_CLAIM = 'ADMETA_MSG_NFT_CLAIM'
+export const ADMETA_MSG_EVM = 'ADMETA_MSG_EVM'
 export const ADMETA_MSG_HACKATHON_SYNC_TO = 'ADMETA_MSG_HACKATHON_SYNC_TO'
-export const API = 'http://localhost:3120/'
-// export const WEP_PAGE = 'https://polkadot.hackathon.admeta.network/'
-export const WEP_PAGE = 'http://localhost:3000/'
+// export const WEP_PAGE = 'http://localhost:3020/'
+export const WEP_PAGE = 'http://45.8.133.193:3020/'
+export const DOMAIN_CONFIG_URL = 'https://raw.githubusercontent.com/AdMetaNetwork/web3-product-categorized-list/main/web3-product-list.json'
 
-export const CLAIM_PAGE = 'https://app.testnet.admeta.network/ad-display'
+// export const LINK_HTTP = 'http://localhost:3000/'
+export const LINK_HTTP = 'https://app.admeta.network/'
 
+export const TEST_ACCOUNT = 'frozen captain slender cat multiply small okay cruise stone virus aim learn'
+export const CONTRACT_ADDRESS = '0xd112476CA74aAa81D4B4cB1921423260dff57aF2'
+export const RPC = 'https://sepolia.gateway.tenderly.co'
 // browser 2 minutes report
 export const REPORTING_TIME = 1000 * 10
-
-export const CONTRACT_ADDRESS = '0xD4FE6050a07Dbc17db23A363de19F2527FdfCcB7'
-
-export const LINK_HTTP = 'https://app.admeta.network/'
+// open tabs number
+export const OPEN_TAB_NUMBER = 7
 
 export const NFT_RECOMMOND = [
   {
