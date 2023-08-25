@@ -40,6 +40,7 @@ class Background {
         NFT: 0,
         Metaverse: 0,
         OnChainData: 0,
+        AI: 0,
         DID: 0,
       }
     })
@@ -89,9 +90,9 @@ class Background {
         this.saveSwitchExt(data)
         break;
 
-        case ADMETA_MSG_CLEAR_DID:
-          browser.storage.local.remove('isdid')
-          break;
+      case ADMETA_MSG_CLEAR_DID:
+        browser.storage.local.remove('isdid')
+        break;
 
       default:
         break;
@@ -270,9 +271,10 @@ class Background {
       );
     }
     if (q === 'did' || q === 'litentry') {
-      if (isdid) {
-        this.callEVM(tabId, account)
-      }
+      this.callEVM(tabId, 4)
+    }
+    if (q === 'ai' || q === 'web3go') {
+      this.callEVM(tabId, 5)
     }
     if (q === 'nft' || q === 'opensea') {
       Messenger.sendMessageToContentScript(
@@ -319,13 +321,37 @@ class Background {
     if (pushDate === d) {
       return
     }
-    this.callEVM(tabId, account)
+    // this.callEVM(tabId)
   }
 
-  async callEVM(tabId: number, account: string) {
-    const idx = BigNumber.from(8)
+  async callEVM(tabId: number, tag: number) {
+    const { address } = await browser.storage.local.get(['address'])
+    console.log(address)
+    // get user tag score
+    const useScore = await this.contract?.getUserLevel(address)
+    console.log(JSON.parse(useScore.categoryScores))
+    const obj = JSON.parse(useScore.categoryScores)
 
-    this.contract?.adInfo(idx).then((b: any) => {
+    // if (obj.AI < 100) {
+    //   return
+    // }
+
+    if (tag === 4) {
+      if (obj.DID < 100) {
+        return
+      }
+    }
+
+    if (tag === 5) {
+      if (obj.AI < 100) {
+        return
+      }
+    }
+
+    const matchIndex = await this.contract?.matchAd(BigNumber.from(tag), address)
+    console.log(matchIndex)
+
+    this.contract?.adInfo(matchIndex).then((b: any) => {
       const message = {
         callbackLink: b[6],
         metadata: b[4],
@@ -335,7 +361,7 @@ class Background {
       Messenger.sendMessageToContentScript(
         tabId,
         ADMETA_MSG_AD_PUSH,
-        { message, address: account }
+        { message, address }
       );
       browser.storage.local.set({ pushDate: Helper.currentDate() })
     })

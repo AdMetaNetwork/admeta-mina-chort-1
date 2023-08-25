@@ -1,6 +1,6 @@
 import { ethers, BigNumber } from 'ethers'
 import detectEthereumProvider from "@metamask/detect-provider";
-import abi from "./abi";
+import { abi } from "./abi";
 import * as U from './'
 
 class CallEVM {
@@ -20,12 +20,12 @@ class CallEVM {
     this.contract = c.connect(this.signer)
   }
 
-  async setUserLevel(level: BigNumber, score: BigNumber, categoryScore: string) {
-    return await this.contract?.setUserLevel(level, score, categoryScore)
+  async setUserLevel(level: BigNumber, score: BigNumber, categoryScore: string, address: string) {
+    return await this.contract?.setUserLevel(level, score, categoryScore, address)
   }
 
-  async getUserLevel() {
-    return await this.contract?.getUserLevel()
+  async getUserLevel(address: string) {
+    return await this.contract?.getUserLevel(address)
   }
 
 }

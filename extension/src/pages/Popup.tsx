@@ -29,9 +29,7 @@ const Popup: FC = () => {
             ?
             <Protocol/>
             :
-            <Dashboard
-              address={ address }
-            />
+            <Dashboard />
         }
       </div>
     </U.BaseCtx.Provider>

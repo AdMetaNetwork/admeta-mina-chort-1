@@ -1,4 +1,4 @@
-import { API } from './constant'
+import { API, WEP_PAGE } from './constant'
 import { ApiInfo, RequestReq, Params, Domains } from './types'
 import browser from 'webextension-polyfill'
 class Helper {
@@ -102,6 +102,32 @@ class Helper {
     const m = date.getMonth() + 1
 
     return `${y}-${m}-${d}`
+  }
+
+  static async getOriginInfo() {
+    const tabs = await browser.tabs.query({})
+    const origin = new URL(WEP_PAGE).host
+    const exsitIndex = tabs.findIndex((item) => {
+      return new URL(item.url!).host === origin
+    })
+
+    return {
+      tabId: tabs[exsitIndex].id,
+      url: tabs[exsitIndex].url
+    }
+  }
+
+  static async checkOriginIsExist() {
+    const tabs = await browser.tabs.query({})
+    const origin = new URL(WEP_PAGE).host
+    const exsitIndex = tabs.findIndex((item) => {
+      return new URL(item.url!).host === origin
+    })
+    if (exsitIndex !== -1) {
+      browser.tabs.update(tabs[exsitIndex].id, { active: true })
+    } else {
+      browser.tabs.create({ url: WEP_PAGE })
+    }
   }
   
 }

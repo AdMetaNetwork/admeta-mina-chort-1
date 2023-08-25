@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useAccount, useConnect } from 'wagmi'
 import * as U from '@/utils'
 import { BigNumber } from "ethers";
+import { ADMETA_MSG_ACCOUNT } from '@/utils/constant';
 
 const Dashboard: FC = () => {
   const { adMetaAddress, minaAddress } = useContext(BaseCtx)
@@ -24,6 +25,12 @@ const Dashboard: FC = () => {
     // console.log((arr[index] - arr[index - 1]) / arr[index]  * 100)
     return [s, e]
   }
+
+  useEffect(() => {
+    if (address) {
+      U.Messager.sendMessageToContent(ADMETA_MSG_ACCOUNT, { account: address, balance: 0 })
+    }
+  })
 
 
   return address && minaAddress
@@ -89,20 +96,20 @@ const Dashboard: FC = () => {
               <div className={'text-gray-500 mr-8 w-[50px]'}>{scoreMap[key]}</div>
               <div className={'text-yellow-500 mr-8 w-[50px]'}>Lv.{U.H.calculationSingleLevel(scoreMap[key])}</div>
               <div className={`h-2 w-[60%] bg-gray-700`}>
-                <div 
+                <div
                   className={`h-2 bg-blue-500`}
-                  style={{width: `${step(U.H.calculationSingleLevel(scoreMap[key]), U.C.MIN_LEVEL)[0]}%`}}
-                  ></div>
+                  style={{ width: `${step(U.H.calculationSingleLevel(scoreMap[key]), U.C.MIN_LEVEL)[0]}%` }}
+                ></div>
               </div>
             </div>
           ))
         }
       </div>
-      
+
       <div className={'flex mt-20 w-full justify-center mb-20'}>
         <BaseBtn
           label={'Data Sync'}
-          handleClick={() => {
+          handleClick={async () => {
             let score = localStorage.getItem('sync_data')
             if (!score) {
               score = JSON.stringify({
@@ -111,51 +118,71 @@ const Dashboard: FC = () => {
                 NFT: 0,
                 Metaverse: 0,
                 OnChainData: 0,
-                DID: 0
+                DID: 0,
+                AI: 0
               })
             }
-            console.log(score)
+            console.log(JSON.parse(score))
             const c = new U.CallEVM()
-
-
-            c.init().then(async () => {
-              const r = await c.getUserLevel()
+            setScoreMap(JSON.parse(score))
+            try {
+              await c.init()
+            } catch (err: any) {
+              console.log(err.message, 'Error')
+            }
+            try {
+              const r = await c.getUserLevel(address!)
+              console.log(r, '00099')
               const o = JSON.parse(r[3])
               if (!score) return
               const s = JSON.parse(score)
               Object.keys(o).map((key) => {
                 o[key] += s[key]
               })
-              
+
               setScoreMap(o)
 
-              const level = BigNumber.from(U.H.calculationAllLevel(o)[0])
-              const allScore = BigNumber.from(U.H.calculationAllLevel(o)[1])
+              const level = BigNumber.from(0)
+              const allScore = BigNumber.from(0)
               const categoryScore = JSON.stringify(o)
               console.log(level, allScore, categoryScore)
-              c.setUserLevel(level, allScore, categoryScore).then()
+              c.setUserLevel(level, allScore, categoryScore, address!).then()
               localStorage.removeItem('sync_data')
-            })
+            } catch (error) {
+              const level = BigNumber.from(0)
+              const allScore = BigNumber.from(0)
+              const categoryScore = score
+              console.log(level, allScore, categoryScore)
+              c.setUserLevel(level, allScore, categoryScore, address!).then()
+            }
           }}
         />
         <div className='w-10'></div>
         <BaseBtn
-          label={'Clear DID data'}
+          label={'Clear data'}
           bg='bg-red-500'
           handleClick={() => {
             const c = new U.CallEVM()
             c.init().then(async () => {
-              const r = await c.getUserLevel()
+              const r = await c.getUserLevel(address)
               const o = JSON.parse(r[3])
               setScoreMap(o)
 
-              const level = BigNumber.from(U.H.calculationAllLevel(o)[0])
-              const allScore = BigNumber.from(U.H.calculationAllLevel(o)[1])
-              o.DID = 0
-              const categoryScore = JSON.stringify(o)
+              const level = BigNumber.from(0)
+              const allScore = BigNumber.from(0)
+              const categoryScore = JSON.stringify({
+                DeFi: 0,
+                GameFi: 0,
+                NFT: 0,
+                Metaverse: 0,
+                OnChainData: 0,
+                DID: 0,
+                AI: 0
+              })
               console.log(level, allScore, categoryScore)
-              c.setUserLevel(level, allScore, categoryScore).then()
+              c.setUserLevel(level, allScore, categoryScore, address).then()
               U.Messager.sendMessageToContent(U.C.ADMETA_MSG_CLEAR_DID, { address })
+              setScoreMap({})
             })
           }}
         />

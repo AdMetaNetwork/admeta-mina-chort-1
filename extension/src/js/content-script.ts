@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill'
 import Messenger from "../util/messenger";
-import { ADMETA_MSG_AD_PUSH, ADMETA_MSG_NFT_PUSH, ADMETA_MSG_NFT_CLAIM, ADMETA_MSG_HACKATHON_SYNC_TO } from '../util/constant'
+import { ADMETA_MSG_AD_PUSH, ADMETA_MSG_NFT_PUSH, ADMETA_MSG_NFT_CLAIM, ADMETA_MSG_HACKATHON_SYNC_TO, ADMETA_MSG_EXTENISON_CALL_ADDRESS, ADMETA_MSG_ACCOUNT } from '../util/constant'
 import { pushAdCard, pushNftCard, pushClaimCard } from './ui'
 import Helper from '../util/helper';
 class ContentScript {
@@ -59,6 +59,14 @@ class ContentScript {
         break;
       case ADMETA_MSG_HACKATHON_SYNC_TO:
         this.syncStorageMessages(data);
+        break;
+      case ADMETA_MSG_EXTENISON_CALL_ADDRESS:
+
+        const storage = localStorage.getItem('wagmi.store')
+        if (!storage) return
+        const obj = JSON.parse(storage)
+        const account = obj.state.data.account
+        Messenger.sendMessageToBackground(ADMETA_MSG_ACCOUNT, { address: account, balance: 0 })
         break;
 
       default:
