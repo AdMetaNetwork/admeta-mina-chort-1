@@ -31,6 +31,11 @@ const WHITE_LIST = {
 			name: 'Litentry',
 			domain: 'litentry.com',
 			category: ['DID']
+		},
+		{
+			name: 'Web3Go',
+			domain: 'din.web3go.xyz',
+			category: ['AI']
 		}
 	]
 }
