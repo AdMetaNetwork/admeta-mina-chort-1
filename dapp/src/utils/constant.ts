@@ -9,7 +9,8 @@ export const ADMETA_MSG_ACCOUNT = 'ADMETA_MSG_ACCOUNT'
 export const ADMETA_MSG_HACKATHON_SYNC = 'ADMETA_MSG_HACKATHON_SYNC'
 export const ADMETA_MSG_CLEAR_DID = 'ADMETA_MSG_CLEAR_DID'
 
-export const CONTRACT_ADDRESS = '0x34Efa1dEDd98afC37A2C5674Cfb73994058Ec20F'
+export const HTTP_SERVER = 'https://api.admeta.network/'
+// export const HTTP_SERVER = 'http://localhost:5000/'
 
 export const MIN_LEVEL = [50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 30000]
 export const MAX_LEVEL = [200, 1000, 2000, 5000, 10000, 20000, 30000, 50000, 80000]

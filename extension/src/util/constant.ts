@@ -10,8 +10,8 @@ export const ADMETA_MSG_EVM = 'ADMETA_MSG_EVM'
 export const ADMETA_MSG_HACKATHON_SYNC_TO = 'ADMETA_MSG_HACKATHON_SYNC_TO'
 export const ADMETA_MSG_CLEAR_DID = 'ADMETA_MSG_CLEAR_DID'
 export const ADMETA_MSG_EXTENISON_CALL_ADDRESS = 'ADMETA_MSG_EXTENISON_CALL_ADDRESS'
-// export const WEP_PAGE = 'http://localhost:3000/'
-export const WEP_PAGE = 'https://hackathon.mina.admeta.network/'
+// export const WEP_PAGE = 'http://localhost:3002/'
+export const WEP_PAGE = 'https://mina.admeta.network/'
 
 export const DOMAIN_CONFIG_URL = 'https://raw.githubusercontent.com/AdMetaNetwork/web3-product-categorized-list/main/web3-product-list.json'
 
@@ -19,7 +19,6 @@ export const DOMAIN_CONFIG_URL = 'https://raw.githubusercontent.com/AdMetaNetwor
 export const LINK_HTTP = 'https://app.admeta.network/'
 
 export const TEST_ACCOUNT = 'frozen captain slender cat multiply small okay cruise stone virus aim learn'
-export const CONTRACT_ADDRESS = '0x34Efa1dEDd98afC37A2C5674Cfb73994058Ec20F'
 export const RPC = 'https://sepolia.gateway.tenderly.co'
 // browser 2 minutes report
 export const REPORTING_TIME = 1000 * 10

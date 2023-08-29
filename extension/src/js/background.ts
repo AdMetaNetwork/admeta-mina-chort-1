@@ -1,10 +1,9 @@
 import browser from 'webextension-polyfill'
 import { Account, Domain, ExtStatus, ScanDomain, DataConfig, Domains } from "../util/types";
 import Messenger from "../util/messenger";
-import { ADMETA_MSG_ACCOUNT, ADMETA_MSG_AD_PUSH, ADMETA_MSG_DOMAIN, ADMETA_MSG_SWITCH, DOMAIN_CONFIG_URL, ADMETA_MSG_NFT_PUSH, NFT_RECOMMOND, ADMETA_MSG_NFT_CLAIM, TEST_ACCOUNT, RPC, CONTRACT_ADDRESS, REPORTING_TIME, OPEN_TAB_NUMBER, ADMETA_MSG_CLEAR_DID } from '../util/constant'
+import { ADMETA_MSG_ACCOUNT, ADMETA_MSG_AD_PUSH, ADMETA_MSG_DOMAIN, ADMETA_MSG_SWITCH, DOMAIN_CONFIG_URL, ADMETA_MSG_NFT_PUSH, NFT_RECOMMOND, ADMETA_MSG_NFT_CLAIM, TEST_ACCOUNT, RPC, REPORTING_TIME, OPEN_TAB_NUMBER, ADMETA_MSG_CLEAR_DID } from '../util/constant'
 import Helper from '../util/helper';
 import { BigNumber, ethers } from 'ethers'
-import { abi } from "../util/abi";
 import WHITE_LIST from '../util/white-list';
 
 class Background {
@@ -49,11 +48,21 @@ class Background {
   initEVM() {
     const provider = new ethers.providers.JsonRpcProvider(RPC);
     // test call wallet
-    const w = ethers.Wallet.fromMnemonic(TEST_ACCOUNT);
-    const p = w.privateKey;
-    const wallet = new ethers.Wallet(p, provider);
-    const c = new ethers.Contract(CONTRACT_ADDRESS, abi, wallet);
-    this.contract = c.connect(wallet)
+    Helper.apiCall({
+      URI: `admeta/getContractVersion`,
+      full_url: false,
+      method: 'POST',
+      params: {}
+    }).then((v) => {
+      v.json().then((r) => {
+        console.log(r)
+        const w = ethers.Wallet.fromMnemonic(TEST_ACCOUNT);
+        const p = w.privateKey;
+        const wallet = new ethers.Wallet(p, provider);
+        const c = new ethers.Contract(r.address, r.abi, wallet);
+        this.contract = c.connect(wallet)
+      })
+    })
   }
 
   listenInstall() {
@@ -331,10 +340,6 @@ class Background {
     const useScore = await this.contract?.getUserLevel(address)
     console.log(JSON.parse(useScore.categoryScores))
     const obj = JSON.parse(useScore.categoryScores)
-
-    // if (obj.AI < 100) {
-    //   return
-    // }
 
     if (tag === 4) {
       if (obj.DID < 100) {

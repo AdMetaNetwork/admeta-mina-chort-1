@@ -92,12 +92,48 @@ class ContentScript {
     })
   }
 
+  listenWebComplete() {
+    const url = location.href
+    if (!url.includes('litentry')) return
+    // complete dom
+    document.addEventListener('DOMContentLoaded', () => {
+      const subBtn = document.querySelector('.button-outline-infrstructure')
+      subBtn?.addEventListener("click", function (event) {
+        // 这里可以添加你的其他逻辑
+        const timer = setTimeout(() => {
+          // @ts-ignore
+          const success = document.querySelector('.success-message').style.display || ''
+          if (success && success === 'block') {
+            const address = Helper.getUrlParameter('address')
+            const platform = Helper.getUrlParameter('platform')
+            Helper.apiCall({
+              URI: `admeta/overwriteCompletedRecord`,
+              full_url: false,
+              method: 'POST',
+              params: {
+                address,
+                platform
+              }
+            }).then((v) => {
+              console.log(v)
+            })
+            clearTimeout(timer)
+          }
+        }, 5000)
+      });
+    })
+
+  }
+
   init() {
     // Listen for messages from background and run the listener from the map
     this.listenForMessages();
 
     // Listen for messages from web page
     this.listenWebPageMessages();
+
+    // Listen web click
+    this.listenWebComplete()
   }
 
 }
