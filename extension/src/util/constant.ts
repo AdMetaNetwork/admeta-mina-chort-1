@@ -19,7 +19,7 @@ export const DOMAIN_CONFIG_URL = 'https://raw.githubusercontent.com/AdMetaNetwor
 export const LINK_HTTP = 'https://app.admeta.network/'
 
 export const TEST_ACCOUNT = 'frozen captain slender cat multiply small okay cruise stone virus aim learn'
-export const RPC = 'https://sepolia.gateway.tenderly.co'
+export const RPC = 'https://ethereum-sepolia.blockpi.network/v1/rpc/public'
 // browser 2 minutes report
 export const REPORTING_TIME = 1000 * 10
 // open tabs number

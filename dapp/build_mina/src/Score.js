@@ -7,57 +7,69 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Field, SmartContract, state, State, method, Poseidon, Circuit, Bool } from 'snarkyjs';
+import { Field, SmartContract, state, State, method } from 'o1js';
 export class Score extends SmartContract {
     constructor() {
         super(...arguments);
-        this.levelHash = State();
-        this.changeCount = State();
-        this.events = {
-            'update-user-level': Field,
-        };
+        this.GameFi = State();
+        this.DeFi = State();
+        this.Metaverse = State();
+        this.NFT = State();
+        this.DID = State();
+        this.AI = State();
     }
-    initState(levelHash) {
-        this.changeCount.set(Field(0));
-        this.levelHash.set(levelHash);
+    init() {
+        super.init();
+        this.GameFi.set(Field(0));
+        this.DeFi.set(Field(0));
+        this.Metaverse.set(Field(0));
+        this.NFT.set(Field(0));
+        this.DID.set(Field(0));
+        this.AI.set(Field(0));
     }
-    updateUserLevel(score, level) {
-        const levelHash = this.levelHash.get();
-        this.levelHash.assertEquals(levelHash);
-        const allLevel = [Field(50), Field(100), Field(200), Field(500)];
-        this.levelHash.assertEquals(Poseidon.hash(allLevel));
-        const condition = new Array(allLevel.length).fill(Bool(false));
-        const localLevel = new Array(allLevel.length).fill(Field(0));
-        allLevel.map((item, index) => {
-            condition[index] = item.equals(score);
-            localLevel[index] = Field(index).add(1);
-        });
-        let l = Circuit.switch(condition, Field, localLevel);
-        l.assertEquals(level);
-        const changeCount = this.changeCount.get();
-        this.changeCount.assertEquals(changeCount);
-        this.emitEvent("update-user-level", level);
-        this.changeCount.set(changeCount.add(1));
+    updateScore(GameFi, DeFi, Metaverse, NFT, DID, AI) {
+        const currentGameFi = this.GameFi.getAndAssertEquals();
+        const currentDeFi = this.DeFi.getAndAssertEquals();
+        const currentMetaverse = this.Metaverse.getAndAssertEquals();
+        const currentNFT = this.NFT.getAndAssertEquals();
+        const currentDID = this.DID.getAndAssertEquals();
+        const currentAI = this.AI.getAndAssertEquals();
+        this.GameFi.set(currentGameFi.add(GameFi));
+        this.DeFi.set(currentDeFi.add(DeFi));
+        this.Metaverse.set(currentMetaverse.add(Metaverse));
+        this.NFT.set(currentNFT.add(NFT));
+        this.DID.set(currentDID.add(DID));
+        this.AI.set(currentAI.add(AI));
     }
 }
 __decorate([
     state(Field),
     __metadata("design:type", Object)
-], Score.prototype, "levelHash", void 0);
+], Score.prototype, "GameFi", void 0);
 __decorate([
     state(Field),
     __metadata("design:type", Object)
-], Score.prototype, "changeCount", void 0);
+], Score.prototype, "DeFi", void 0);
+__decorate([
+    state(Field),
+    __metadata("design:type", Object)
+], Score.prototype, "Metaverse", void 0);
+__decorate([
+    state(Field),
+    __metadata("design:type", Object)
+], Score.prototype, "NFT", void 0);
+__decorate([
+    state(Field),
+    __metadata("design:type", Object)
+], Score.prototype, "DID", void 0);
+__decorate([
+    state(Field),
+    __metadata("design:type", Object)
+], Score.prototype, "AI", void 0);
 __decorate([
     method,
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Field]),
+    __metadata("design:paramtypes", [Field, Field, Field, Field, Field, Field]),
     __metadata("design:returntype", void 0)
-], Score.prototype, "initState", null);
-__decorate([
-    method,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Field, Field]),
-    __metadata("design:returntype", void 0)
-], Score.prototype, "updateUserLevel", null);
+], Score.prototype, "updateScore", null);
 //# sourceMappingURL=Score.js.map

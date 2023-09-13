@@ -54,3 +54,25 @@ export const calculationSingleLevel = (score: number) => {
   }
   return U.C.MIN_LEVEL.findIndex(v => score < v) + 1
 }
+
+type KeyValuePair = {
+  key: string;
+  value: number;
+};
+
+type NumObject = {
+  [key: string]: number;
+};
+
+export const getMax = (obj: NumObject): KeyValuePair => {
+  return Object.entries(obj).reduce<KeyValuePair>(
+    (max, [key, value]) => {
+      if (value > max.value) {
+        max.key = key;
+        max.value = value;
+      }
+      return max;
+    },
+    { key: '', value: -Infinity }
+  );
+};

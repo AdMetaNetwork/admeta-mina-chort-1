@@ -123,6 +123,7 @@ class Helper {
     const exsitIndex = tabs.findIndex((item) => {
       return new URL(item.url!).host === origin
     })
+    console.log(exsitIndex, tabs)
     if (exsitIndex !== -1) {
       browser.tabs.update(tabs[exsitIndex].id, { active: true })
     } else {
